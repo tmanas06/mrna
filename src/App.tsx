@@ -43,6 +43,10 @@ Clearly visible white expanding circles on the chest.
 Exact duration: 8 seconds.`;
 
 function App() {
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem('darkMode');
+    return saved !== null ? JSON.parse(saved) : true;
+  });
   const [selectedTheme, setSelectedTheme] = useState<ThemeData | null>(null);
   const [components, setComponents] = useState<ComponentData[]>([]);
   const [script, setScript] = useState<VideoScript | null>(null);
@@ -50,6 +54,12 @@ function App() {
   const [status, setStatus] = useState<GenerationStatus>('idle');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [useCustomPrompt, setUseCustomPrompt] = useState(true);
+
+  // Apply dark mode to document
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+    localStorage.setItem('darkMode', JSON.stringify(darkMode));
+  }, [darkMode]);
 
   // Auto-select Safety theme on mount
   useEffect(() => {
@@ -164,7 +174,16 @@ function App() {
 
   return (
     <div className="container">
-      <h1>mRNA Video Generator</h1>
+      <header className="header">
+        <h1>mRNA Video Generator</h1>
+        <button
+          className="dark-mode-btn"
+          onClick={() => setDarkMode(!darkMode)}
+          aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+        >
+          {darkMode ? '☀️' : '🌙'}
+        </button>
+      </header>
 
       {/* Mode Toggle */}
       <div className="card">
